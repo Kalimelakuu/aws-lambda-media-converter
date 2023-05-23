@@ -1,0 +1,38 @@
+function handler(event) {
+  var request = event.request; // Extract the request object from the event parameter
+
+  var userAgent = request.headers['user-agent']; // Get the user agent string from the request headers
+
+  function isTheUserUsingLaptop(userAgent) {
+    userAgent = JSON.stringify(userAgent); // Convert the user agent to a JSON string (unnecessary step)
+    return /Windows|Mac/i.test(userAgent); // Check if the user agent indicates a laptop or desktop device
+  }
+
+  var isTheUserFromLaptop = isTheUserUsingLaptop(userAgent); // Determine if the user is using a laptop based on the user agent
+  console.log(isTheUserFromLaptop); // Outputs: false (print the result to the console)
+
+  // Determine the appropriate video URL and set the response object accordingly
+  if (isTheUserFromLaptop) {
+    var response = {
+      statusCode: 302,
+      statusDescription: 'Found',
+      headers: {
+        "location": { "value": "https://d1gf7ss74hzsru.cloudfront.net/computer_version/dangeofScilence-new1.mp4" },
+        "x-request-info": { "value": JSON.stringify(isTheUserFromLaptop) } // Add custom header with request information
+      }
+    };
+  } else {
+    var response = {
+      statusCode: 302,
+      statusDescription: 'Found',
+      headers: {
+        "location": { "value": "https://d1gf7ss74hzsru.cloudfront.net/mobile_version/dangeofScilence-new2.mp4" },
+        "x-request-info": { "value": JSON.stringify(isTheUserFromLaptop) } // Add custom header with request information
+      }
+    };
+  }
+
+  console.log(request); // Log the request object to the console
+
+  return response; // Return the response object
+}
